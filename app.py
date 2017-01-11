@@ -1,25 +1,28 @@
 import config
 
+import falcon
+import json
+
 from db import Session
 from models import db, Protocol
 from schemas import ProtocolSchema
 
-from flask import Flask, jsonify
+from wsgiref import simple_server
 
 
-app = Flask(__name__)
-
-@app.route('/protocol/<id>')
-def get_protocol(id):
-    session = Session()
-    protocol = session.query(Protocol).get(id)
-    protocol_schema = ProtocolSchema()
-    result = protocol_schema.dump(protocol)
-    return jsonify({'protocol': result.data})
-
-@app.teardown_appcontext
-def shutdown_session(exception=None):
+def shutdown_session(req, resp, resource):
     Session.remove()
 
-if __name__ == "__main__":
-    app.run(debug=config.DEV)
+class ProtocolResource(object):
+    @falcon.after(shutdown_session)
+    def on_get(self, req, resp, protocol_id):
+        session = Session()
+        protocol = session.query(Protocol).get(protocol_id)
+        protocol_schema = ProtocolSchema()
+        result = protocol_schema.dump(protocol)
+
+        resp.body = json.dumps(result.data)
+
+app = falcon.API()
+protocols = ProtocolResource()
+app.add_route('/protocol/{protocol_id}', protocols)
