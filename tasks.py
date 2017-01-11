@@ -1,6 +1,6 @@
 import os
 
-from db import engine
+from app.db import engine
 from models import Base
 
 from invoke import task
