@@ -1,0 +1,3 @@
+SUCCESS_RESPONSE = 'success'
+FAIL_RESPONSE = 'fail'
+ERROR_RESPONSE = 'error'

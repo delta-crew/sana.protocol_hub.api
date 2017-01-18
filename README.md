@@ -1,5 +1,5 @@
 # Sana Protocol Hub - API
-The home of the Sana Protocol Hub backend API. Written in Python 3 using the Falcon framework, with SQLAlchemy and marshmallow.
+The home of the Sana Protocol Hub backend API. Written in Python 3 using the Falcon framework, with SQLAlchemy and marshmallow. The API responses follow the JSend structure defined [here](https://labs.omniti.com/labs/jsend).
 
 ## Running in development
 ```
