@@ -5,7 +5,7 @@ from app.middleware import SessionWrapper, JSendTranslator
 from resources import (
     ProtocolsResource,
     ProtocolResource,
-    ProtocolPublicListResource,
+    PublicProtocolsResource,
     ProtocolVersionsResource,
     ProtocolVersionResource,
     OrganizationsResource,
