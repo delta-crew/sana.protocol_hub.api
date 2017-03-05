@@ -12,6 +12,8 @@ from resources import (
     OrganizationResource,
     OrganizationGroupsResource,
     OrganizationGroupResource,
+    OrganizationGroupMembersResource,
+    OrganizationGroupMemberResource,
     OrganizationMdsLinksResource,
     OrganizationMdsLinkResource,
 )
@@ -29,14 +31,14 @@ app = falcon.API(
 
 # Protocols
 protocol = ProtocolResource()
-protocols_list = ProtocolListResource()
-protocols_public_list = ProtocolPublicListResource()
+protocols = ProtocolsResource()
+public_protocols = PublicProtocolsResource()
 
 app.add_route('/protocols/', protocols)
-app.add_route('/protocols/public', protocols_public_list)
+app.add_route('/protocols/public', public_protocols)
 app.add_route('/protocols/{protocol_id}', protocol)
-app.add_route('/organizations/{organization_id}/protocols/', protocols_list)
-app.add_route('/organizations/{organization_id}/protocols/{protocol_id}', protocols)
+app.add_route('/organizations/{organization_id}/protocols/', protocols)
+app.add_route('/organizations/{organization_id}/protocols/{protocol_id}', protocol)
 
 
 # Protocol Versions
@@ -69,6 +71,20 @@ organization_groups = OrganizationGroupsResource()
 
 app.add_route('/organizations/{organization_id}/groups', organization_groups)
 app.add_route('/organizations/{organization_id}/groups/{group_id}', organization_group)
+
+
+# Organization Group Members
+organization_group_member = OrganizationGroupMemberResource()
+organization_group_members = OrganizationGroupMembersResource()
+
+app.add_route(
+    '/organizations/{organization_id}/groups/{group_id}/members',
+    organization_group_members
+)
+app.add_route(
+    '/organizations/{organization_id}/groups/{group_id}/members/{member_id}',
+    organization_group_member
+)
 
 
 # Organization MDS Links

@@ -10,7 +10,7 @@ from schemas import ProtocolSchema
 
 @falcon.after(app.hooks.shutdown_session)
 class ProtocolsResource(object):
-    def on_get(self, req, resp, organization_id):
+    def on_get(self, req, resp, organization_id=None):
         session = req.context['session']
 
         if organization_id:
@@ -23,13 +23,9 @@ class ProtocolsResource(object):
                     filter_by(Protocol.user=req.context['user'].id).\
                     all()
 
-        result = []
-        for protocol in protocols:
-            protocol_schema = ProtocolSchema()
-            data = protocol_schema.dump(protocol).data
-            result.append(data)
-
-        resp.context['result'] = result
+        protocol_schema = ProtocolSchema()
+        result = protocol_schema.dump(protocol)
+        resp.context['result'] = result.data
 
     def on_post(self, req, res):
         # TODO
