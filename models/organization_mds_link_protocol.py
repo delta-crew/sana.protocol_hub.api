@@ -7,3 +7,4 @@ class OrganizationMDSLinkProtocol(PHMixin, Base):
 
     mds_link_id = db.Column(db.Integer, db.ForeignKey("ph_organization_mds_links.id"))
     protocol_id = db.Column(db.Integer, db.ForeignKey("ph_protocols.id"))
+    synchronized_version = db.Column(db.Integer, db.ForeignKey("ph_protocols.version"))

@@ -5,4 +5,5 @@ from models.base import Base, PHMixin
 class Protocol(PHMixin, Base):
     __tablename__ = 'ph_protocol'
 
+    version = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String)
