@@ -7,7 +7,6 @@ from models import Organization
 from schemas import OrganizationSchema
 
 
-@falcon.after(app.hooks.shutdown_session)
 class OrganizationsResource(object):
     def on_post(self):
         # TODO create organization

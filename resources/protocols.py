@@ -8,7 +8,6 @@ from models import Protocol
 from schemas import ProtocolSchema
 
 
-@falcon.after(app.hooks.shutdown_session)
 class ProtocolsResource(object):
     def on_get(self, req, resp, organization_id=None):
         session = req.context['session']

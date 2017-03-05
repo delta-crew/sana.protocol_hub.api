@@ -7,7 +7,6 @@ from models import OrganizationMDSLinkProtocol
 from schemas import OrganizationMDSLinkProtocolSchema
 
 
-@falcon.after(app.hooks.shutdown_session)
 class OrganizationMDSLinkProtocolsResource(object):
     def on_get(self, req, res, organization_id, mds_link_id):
         # TODO list organization mds link protocols

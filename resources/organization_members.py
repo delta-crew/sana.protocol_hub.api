@@ -3,15 +3,15 @@ import falcon
 
 from app import db
 from app.constants import SUCCESS_RESPONSE, FAIL_RESPONSE
-from models import OrganizationGroup
-from schemas import OrganizationGroupSchema
+from models import OrganizationMember
+from schemas import OrganizationMemberSchema
 
 
-class OrganizationGroupsResource(object):
+class OrganizationMembersResource(object):
     def on_get(self, req, res, organization_id):
-        # TODO list organization groups
+        # TODO list organization members
         pass
 
     def on_post(self, req, res, organization_id):
-        # TODO create organization group
+        # TODO add organization group member
         pass

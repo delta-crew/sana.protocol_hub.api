@@ -7,7 +7,6 @@ from models import OrganizationMDSLink
 from schemas import OrganizationMDSLinkSchema
 
 
-@falcon.after(app.hooks.shutdown_session)
 class OrganizationMDSLinksResource(object):
     def on_get(self, req, res, organization_id):
         # TODO list organization groups

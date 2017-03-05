@@ -10,12 +10,17 @@ from resources import (
     ProtocolVersionResource,
     OrganizationsResource,
     OrganizationResource,
+    OrganizationMembersResource,
+    OrganizationMemberResource,
     OrganizationGroupsResource,
     OrganizationGroupResource,
     OrganizationGroupMembersResource,
     OrganizationGroupMemberResource,
-    OrganizationMdsLinksResource,
-    OrganizationMdsLinkResource,
+    OrganizationMDSLinksResource,
+    OrganizationMDSLinkResource,
+    OrganizationMDSLinkProtocolsResource,
+    OrganizationMDSLinkProtocolResource,
+    OrganizationMDSLinkSynchronizeResource,
 )
 
 app = falcon.API(
@@ -88,8 +93,8 @@ app.add_route(
 
 
 # Organization MDS Links
-organization_mds_link = OrganizationMdsLinkResource()
-organization_mds_links = OrganizationMdsLinksResource()
+organization_mds_link = OrganizationMDSLinkResource()
+organization_mds_links = OrganizationMDSLinksResource()
 
 app.add_route(
     '/organizations/{organization_id}/mds_links/',
@@ -102,9 +107,9 @@ app.add_route(
 
 
 # Organization MDS Link Protocols
-organization_mds_link_protocols = OrganizationMdsLinkProtocolsResource()
-organization_mds_link_protocol = OrganizationMdsLinkProtocolResource()
-organization_mds_link_synchronize = OrganizationMdsLinkSynchronizeResource()
+organization_mds_link_protocols = OrganizationMDSLinkProtocolsResource()
+organization_mds_link_protocol = OrganizationMDSLinkProtocolResource()
+organization_mds_link_synchronize = OrganizationMDSLinkSynchronizeResource()
 
 app.add_route(
     '/organizations/{organization_id}/mds_links/{mds_link_id}/protocols/',
