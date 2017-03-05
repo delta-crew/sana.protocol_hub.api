@@ -14,7 +14,8 @@ class ProtocolVersionResource(object):
         session = req.context['session']
 
         protocol = session.query(Protocol).\
-                filter_by(Protocol.id=protocol_id, Protocol.version=version_id).\
+                filter(Protocol.id==protocol_id).\
+                filter(Protocol.version==version_id).\
                 one()
 
         protocol_schema = ProtocolSchema()

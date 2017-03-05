@@ -16,11 +16,11 @@ class ProtocolsResource(object):
         if organization_id:
             protocols = session.query(SharedProtocol).\
                     options(joinedload(SharedProtocol.protocol)).\
-                    filter_by(SharedProtocol.organization=organization_id).\
+                    filter(SharedProtocol.organization==organization_id).\
                     all()
         else:
             protocols = session.query(Protocol).\
-                    filter_by(Protocol.user=req.context['user'].id).\
+                    filter(Protocol.user==req.context['user'].id).\
                     all()
 
         protocol_schema = ProtocolSchema()

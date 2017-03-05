@@ -14,7 +14,7 @@ class ProtocolPublicListResource(object):
         session = req.context['session']
 
         protocols = session.query(Protocol).\
-                filter_by(Protocol.public=True).\
+                filter(Protocol.public==True).\
                 all()
 
         result = []

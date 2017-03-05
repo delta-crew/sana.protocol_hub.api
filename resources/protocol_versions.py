@@ -14,7 +14,7 @@ class ProtocolVersionsResoure(object):
         session = req.context['session']
 
         protocol = session.query(Protocol).\
-                filter_by(Protocol.id=protocol_id).\
+                filter(Protocol.id==protocol_id).\
                 all()
 
         result = []
