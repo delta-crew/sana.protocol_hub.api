@@ -1,4 +1,5 @@
 import sqlalchemy as db
+from sqlalchemy.orm import relationship
 
 from models.base import Base
 
@@ -10,3 +11,7 @@ class User(Base):
     username = db.Column(db.String, nullable=False, unique=True)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
+
+    owned_organizations = relationship("Organization", back_populates="owner")
+    organizations = relationship("Organization", secondary="OrganizationMember", backref="members")
+    groups = relationship("OrganizationGroup", secondary="OrganizationGroupMember", backref="members")

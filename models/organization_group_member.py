@@ -3,6 +3,7 @@ from models.base import Base, PHMixin
 
 
 class OrganizationGroupMember(PHMixin, Base):
-    __tablename__ = 'ph_organization_group_member'
+    __tablename__ = 'ph_organization_group_members'
 
-    # TODO
+    user_id = db.Column(db.Integer, db.ForeignKey('auth_user.id'))
+    organization_group_id = db.Column(db.Integer, db.ForeignKey('ph_organization_groups.id'))
