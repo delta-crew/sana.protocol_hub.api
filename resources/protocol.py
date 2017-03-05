@@ -7,10 +7,9 @@ from models import Protocol
 from schemas import ProtocolSchema
 
 
-@falcon.after(app.hooks.shutdown_session)
 class ProtocolResource(object):
     def on_get(self, req, resp, protocol_id):
-        session = db.Session()
+        session = req.context['session']
         protocol = session.query(Protocol).get(protocol_id)
         if protocol == None:
             resp.status = falcon.HTTP_NOT_FOUND

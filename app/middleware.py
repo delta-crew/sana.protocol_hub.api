@@ -1,7 +1,16 @@
 import json
 
+from app import db
 from app.constants import SUCCESS_RESPONSE, FAIL_RESPONSE, ERROR_RESPONSE
 from app.errors import ResponseError
+
+
+class SessionWrapper(object):
+    def process_request(self, req, resp):
+        req.context['session'] = db.Session()
+
+    def process_response(self, req, resp, resource):
+        db.Session.remove()
 
 
 class JSendTranslator(object):
