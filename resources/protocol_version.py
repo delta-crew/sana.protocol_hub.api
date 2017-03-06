@@ -9,6 +9,7 @@ from schemas import ProtocolSchema
 
 
 class ProtocolVersionResource(object):
+    @falcon.before(login_required)
     def on_get(self, req, resp, protocol_id, version_id):
         session = req.context['session']
 
@@ -16,6 +17,8 @@ class ProtocolVersionResource(object):
                 filter(Protocol.id==protocol_id).\
                 filter(Protocol.version==version_id).\
                 one()
+
+        # TODO make sure user is authorized to view this protocol
 
         protocol_schema = ProtocolSchema()
         result = protocol_schema.dump(protocol)

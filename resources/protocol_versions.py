@@ -9,17 +9,16 @@ from schemas import ProtocolSchema
 
 
 class ProtocolVersionsResource(object):
+    @falcon.before(login_required)
     def on_get(self, req, resp, protocol_id):
+        protocol_schema = ProtocolSchema()
         session = req.context['session']
 
-        protocol = session.query(Protocol).\
+        protocols = session.query(Protocol).\
                 filter(Protocol.id==protocol_id).\
                 all()
 
-        result = []
-        for protocol in protocols:
-            protocol_schema = ProtocolSchema()
-            data = protocol_schema.dump(protocol).data
-            result.append(data)
+        # TODO make sure user is authorized to view this protocol's versions
 
-        resp.context['result'] = result
+        data = protocol_schema.dump(protocols)
+        resp.context['result'] = result.data

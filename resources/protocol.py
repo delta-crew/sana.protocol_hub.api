@@ -8,6 +8,7 @@ from schemas import ProtocolSchema
 
 
 class ProtocolResource(object):
+    @falcon.before(login_required)
     def on_get(self, req, resp, protocol_id):
         session = req.context['session']
         protocol = session.query(Protocol).get(protocol_id)
@@ -18,6 +19,8 @@ class ProtocolResource(object):
                 'protocol': 'no protocol with id {}'.format(protocol_id),
             }
             return
+
+        # TODO authorize that this user can view this protocol
 
         protocol_schema = ProtocolSchema()
         result = protocol_schema.dump(protocol)

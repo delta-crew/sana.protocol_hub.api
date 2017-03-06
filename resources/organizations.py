@@ -8,6 +8,7 @@ from schemas import OrganizationSchema
 
 
 class OrganizationsResource(object):
+    @falcon.before(login_required)
     def on_post(self, req, res):
         organization_schema = OrganizationSchema()
         session = req.context['session']

@@ -9,6 +9,7 @@ from schemas import ProtocolSchema
 
 
 class ProtocolsResource(object):
+    @falcon.before(login_required)
     def on_get(self, req, resp, organization_id=None):
         session = req.context['session']
 
@@ -22,10 +23,13 @@ class ProtocolsResource(object):
                     filter(Protocol.user==req.context['user'].id).\
                     all()
 
+        # TODO make sure this user is authorized to view these protocols
+
         protocol_schema = ProtocolSchema()
         result = protocol_schema.dump(protocol)
         resp.context['result'] = result.data
 
+    @falcon.before(login_required)
     def on_post(self, req, res):
         # TODO
-        resp.context['result'] = { 'message': 'TODO' }
+        pass
