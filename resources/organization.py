@@ -1,4 +1,4 @@
-import app.hooks
+from app.hooks import *
 import falcon
 
 from app import db
@@ -8,6 +8,8 @@ from schemas import OrganizationSchema
 
 
 class OrganizationResource(object):
+    @falcon.before(login_required)
+    @falcon.before(user_belongs_to_organization)
     def on_get(self, req, resp, organization_id):
         session = req.context['session']
         protocol = session.query(Organization).get(organization_id)

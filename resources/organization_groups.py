@@ -1,4 +1,4 @@
-import app.hooks
+from app.hooks import *
 import falcon
 
 from app import db
@@ -8,10 +8,38 @@ from schemas import OrganizationGroupSchema
 
 
 class OrganizationGroupsResource(object):
+    @falcon.before(login_required)
+    @falcon.before(user_belongs_to_organization)
     def on_get(self, req, res, organization_id):
-        # TODO list organization groups
-        pass
+        organization_group_schema = OrganizationGroupSchema()
+        session = req.context['session']
 
+        # TODO pagination?
+        groups = session.query(OrganizationGroup).\
+                filter_by(organization_id=organization_id).\
+                all()
+
+        result = organization_group_schema.dump(groups)
+        resp.context['result'] = result.data
+
+    @falcon.before(login_required)
+    @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_groups))
     def on_post(self, req, res, organization_id):
-        # TODO create organization group
-        pass
+        schema = OrganizationGroupSchema()
+        session = req.context['session']
+        user = resp.context['user']
+
+        data, errors = schema.load(req.context['body'])
+        if errors:
+            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = errors
+            return
+
+        # TODO splatting this is probably not super safe
+        group = OrganizationGroup(**data)
+        session.add(group)
+        session.commit()
+
+        result = schema.dump(group)
+        resp.conext['result'] = result.data

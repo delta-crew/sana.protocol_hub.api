@@ -1,4 +1,4 @@
-import app.hooks
+from app.hooks import *
 import falcon
 
 from app import db

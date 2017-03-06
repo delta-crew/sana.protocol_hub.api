@@ -2,7 +2,54 @@ import falcon
 
 from app import db
 from app.constants import FAIL_RESPONSE
-from models import Token, User
+from models import (
+    Token,
+    User,
+    Organization,
+    OrganizationGroup,
+    OrganizationMember,
+    OrganizationGroupMember,
+)
+
+
+def authorize_organization_user_to(permission):
+    # TODO authenticate user organization permissions a better way?
+
+    def helper(req, resp, resource, params):
+        session = req.context['session']
+        user = resp.context['user']
+
+        organization_id = params['organization_id']
+        organization = session.query(Organization).get(organization_id)
+        if user != organization.owner:
+            has_permissions = session.query(OrganizationGroup).\
+                    join(OrganizationGroupMember).\
+                    filter(OrganizationGroup.organization_id==organization_id).\
+                    filter(OrganizationGroupMember.user_id==user.id).\
+                    filter(permission==True).\
+                    one_or_none()
+
+            if has_permissions == None:
+                resp.context['type'] = FAIL_RESPONSE
+                resp.context['result'] = {'unauthorized': 'no permission to perform'}
+                raise falcon.HTTPUnauthorized()
+
+    return helper
+
+
+def user_belongs_to_organization(req, resp, resource, params):
+    session = req.context['session']
+    user = resp.context['user']
+
+    organization_id = params['organization_id']
+    has_permissions = session.query(OrganizationMember).\
+            filter_by(user_id=user.id, organization_id=organization_id).\
+            one_or_none()
+
+    if has_permissions == None:
+        resp.context['type'] = FAIL_RESPONSE
+        resp.context['result'] = {'unauthorized': 'no permission to perform'}
+        raise falcon.HTTPUnauthorized()
 
 
 def login_required(req, resp, resource, params):

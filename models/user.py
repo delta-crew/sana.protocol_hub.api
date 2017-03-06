@@ -14,4 +14,3 @@ class User(Base):
 
     owned_organizations = relationship("Organization", back_populates="owner")
     organizations = relationship("Organization", secondary="OrganizationMember", backref="members")
-    groups = relationship("OrganizationGroup", secondary="OrganizationGroupMember", backref="members")

@@ -1,9 +1,25 @@
 import sqlalchemy as db
+from sqlalchemy.schema import UniqueConstraint
+from sqlalchemy.orm import relationship
 from models.base import Base, PHMixin
 
 
 class OrganizationMember(PHMixin, Base):
-    __tablename__ = 'ph_organization_member'
+    __tablename__ = 'ph_organization_members'
+    __table_args__ = (
+        UniqueConstraint('organization_id', 'user_id'),
+    )
 
-    organization_id = db.Column(db.Integer, db.ForeignKey("ph_organizations.id"))
-    user_id = db.Column(db.Integer, db.ForeignKey("auth_user.id"))
+    organization_id = db.Column(
+            db.Integer,
+            db.ForeignKey("ph_organizations.id", ondelete='CASCADE'))
+    user_id = db.Column(
+            db.Integer,
+            db.ForeignKey("auth_user.id"))
+
+    user = relationship("User")
+    groups = relationship(
+            "OrganizationGroup",
+            secondary="OrganizationGroupMember",
+            backref="members",
+    )
