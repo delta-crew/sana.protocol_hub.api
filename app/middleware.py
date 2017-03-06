@@ -5,6 +5,12 @@ from app.constants import SUCCESS_RESPONSE, FAIL_RESPONSE, ERROR_RESPONSE
 from app.errors import ResponseError
 
 
+class BodyParser(object):
+    def process_request(self, req, resp):
+        if req.content_length:
+            req.context['body'] = json.load(req.stream)
+
+
 class SessionWrapper(object):
     def process_request(self, req, resp):
         req.context['session'] = db.Session()
