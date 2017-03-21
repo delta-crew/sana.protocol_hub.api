@@ -31,5 +31,5 @@ class ProtocolsResource(object):
 
     @falcon.before(login_required)
     def on_post(self, req, res):
-        # TODO
+        # TODO how do we get the protocol and its XML from the builder...
         pass

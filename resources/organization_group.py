@@ -6,7 +6,6 @@ from app.constants import SUCCESS_RESPONSE, FAIL_RESPONSE
 from models import OrganizationGroup, OrganizationGroupMember
 from schemas import OrganizationGroupSchema
 
-
 class OrganizationGroupResource(object):
     @falcon.before(login_required)
     @falcon.before(user_belongs_to_organization)
