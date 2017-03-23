@@ -1,13 +1,8 @@
 from models import Protocol
 
-from marshmallow import Schema, fields, post_load
+from marshmallow_sqlalchemy import ModelSchema
 
 
-class ProtocolSchema(Schema):
-    content = fields.Function(
-        lambda p: p.get_content(),
-        deserialize=lambda c: c)
-
-    @post_load
-    def make_object(self, data):
-        return Protocol(**data)
+class ProtocolSchema(ModelSchema):
+    class Meta:
+        model = Protocol

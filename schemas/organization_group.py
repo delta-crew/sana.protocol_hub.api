@@ -1,11 +1,8 @@
 from models import OrganizationGroup
 
-from marshmallow import Schema, fields, post_load
+from marshmallow_sqlalchemy import ModelSchema
 
 
-class OrganizationGroupSchema(Schema):
-    # TODO
-
-    @post_load
-    def make_object(self, data):
-        return OrganizationGroup(**data)
+class OrganizationGroupSchema(ModelSchema):
+    class Meta:
+        model = OrganizationGroup

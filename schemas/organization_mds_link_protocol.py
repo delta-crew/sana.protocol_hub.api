@@ -1,11 +1,8 @@
 from models import OrganizationMDSLinkProtocol
 
-from marshmallow import Schema, fields, post_load
+from marshmallow_sqlalchemy import ModelSchema
 
 
-class OrganizationMDSLinkProtocolSchema(Schema):
-    # TODO
-
-    @post_load
-    def make_object(self, data):
-        return OrganizationMDSLinkProtocol(**data)
+class OrganizationMDSLinkProtocolSchema(ModelSchema):
+    class Meta:
+        model = OrganizationMDSLinkProtocol
