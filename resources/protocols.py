@@ -4,7 +4,7 @@ import falcon
 from app import db
 from app.constants import SUCCESS_RESPONSE, FAIL_RESPONSE
 from sqlalchemy.orm import joinedload
-from models import Protocol
+from models import Protocol, SharedProtocol, OrganizationMember
 from schemas import ProtocolSchema
 
 
@@ -32,4 +32,36 @@ class ProtocolsResource(object):
     @falcon.before(login_required)
     def on_post(self, req, res):
         # TODO how do we get the protocol and its XML from the builder...
-        pass
+        schema = ProtocolSchema()
+        session = req.context['session']
+        user = resp.context['user']
+
+        data, errors = schema.load(req.context['body'])
+        if errors:
+            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = errors
+            return
+
+        # TODO splatting this is probably not super safe
+        protocol = Protocol(**data)
+
+        session.add(protocol)
+        session.commit()
+
+        # TODO are we going to update all references to this protocol to the
+        # latest version?
+        if protocol.public:
+            session.query(SharedProtocol).\
+                    filter(
+                            SharedProtocol.protocol_id==protocol.id,
+                            SharedProtocol.organization_id.in_(
+                                session.query(OrganizationMember.organization_id).\
+                                        filter(OrganizationMember.member_id==user.id)
+                            )
+                    ).\
+                    update({'synchronized_version': protocol.version})
+            session.commit()
+
+        result = schema.dump(protocol)
+        resp.conext['result'] = result.data
