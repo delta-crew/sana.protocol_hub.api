@@ -12,7 +12,7 @@ class OrganizationGroup(PHMixin, Base):
     name = db.Column(db.String(50))
     manage_mds = db.Column(db.Boolean)
     manage_mds_protocols = db.Column(db.Boolean)
-    sync_with_mds = db.Column(db.Boolean)
+    synchronize_mds = db.Column(db.Boolean)
     manage_groups = db.Column(db.Boolean)
     manage_members = db.Column(db.Boolean)
     # rest of permissions...
