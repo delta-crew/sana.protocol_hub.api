@@ -14,5 +14,12 @@ class SharedProtocol(PHMixin, Base):
     protocol_version = db.Column(db.Integer, db.ForeignKey("ph_protocols.version"))
     organization_id = db.Column(db.Integer, db.ForeignKey("ph_organizations.id"))
 
-    protocol = relationship("Protocol", back_populates="shared_versions")
-    organization = relationship("Organization", back_populates="shared_protocols")
+    protocol = relationship(
+            "Protocol",
+            backref="shared_versions",
+            foreign_keys=[protocol_version, organization_id],
+    )
+    organization = relationship(
+            "Organization",
+            foreign_keys=[organization_id],
+    )

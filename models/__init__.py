@@ -1,5 +1,6 @@
 from models.base import Base
 from models.protocol import Protocol
+from models.shared_protocol import SharedProtocol
 from models.token import Token
 from models.user import User
 from models.organization import Organization

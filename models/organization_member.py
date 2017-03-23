@@ -20,6 +20,6 @@ class OrganizationMember(PHMixin, Base):
     user = relationship("User")
     groups = relationship(
             "OrganizationGroup",
-            secondary="OrganizationGroupMember",
-            backref="members",
+            secondary="ph_organization_group_members",
+            back_populates="members",
     )

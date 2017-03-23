@@ -13,4 +13,5 @@ class User(Base):
     last_name = db.Column(db.String, nullable=False)
 
     owned_organizations = relationship("Organization", back_populates="owner")
-    organizations = relationship("Organization", secondary="OrganizationMember", backref="members")
+    organizations = relationship("Organization",
+            secondary="ph_organization_members", backref="members")

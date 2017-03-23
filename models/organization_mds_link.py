@@ -12,4 +12,8 @@ class OrganizationMDSLink(PHMixin, Base):
     auth_token = db.Column(db.String(100))
 
     organization = relationship("Organization", back_populates="mds_links")
-    protocols = relationship("Protocol", secondary="OrganizationMDSLinkProtocol", backref="mds_links")
+    protocols = relationship(
+            "Protocol",
+            secondary="ph_organization_mds_link_protocols",
+            backref="mds_links",
+    )

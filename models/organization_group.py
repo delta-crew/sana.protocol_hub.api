@@ -14,7 +14,12 @@ class OrganizationGroup(PHMixin, Base):
     manage_mds_protocols = db.Column(db.Boolean)
     sync_with_mds = db.Column(db.Boolean)
     manage_groups = db.Column(db.Boolean)
+    manage_members = db.Column(db.Boolean)
     # rest of permissions...
 
     organization = relationship("Organization", back_populates="groups")
-    members = relationship("OrganizationMember", secondary="OrganizationGroupMember", backref="groups")
+    members = relationship(
+            "OrganizationMember",
+            secondary="ph_organization_group_members",
+            back_populates="groups"
+    )

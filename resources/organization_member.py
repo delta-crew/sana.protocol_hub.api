@@ -9,7 +9,7 @@ from models import OrganizationMember
 class OrganizationMemberResource(object):
     @falcon.before(login_required)
     @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_members))
-    def on_delete(self, req, res, organization_id, organization_id, member_id):
+    def on_delete(self, req, res, organization_id, member_id):
         session = req.context['session']
 
         member = session.query(OrganizationMember).\

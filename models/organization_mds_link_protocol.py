@@ -16,6 +16,6 @@ class OrganizationMDSLinkProtocol(PHMixin, Base):
             db.Integer)
 
     db.ForeignKeyConstraint(
-            ["protocol_id", "synchronized_version"],
+            [protocol_id, synchronized_version],
             ["ph_protocols.id", "ph_protocols.version"],
             ondelete="CASCADE")
