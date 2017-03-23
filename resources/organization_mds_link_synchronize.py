@@ -21,7 +21,7 @@ class OrganizationMDSLinkSynchronizeResource(object):
             'xml': protocol.content
         }
 
-        r = requests.post(url + '/user', auth=(username, password), data=data)
+        r = requests.post(url, auth=(username, password), data=data)
 
     @falcon.before(login_required)
     @falcon.before(authorize_organization_user_to(OrganizationGroup.synchronize_mds))
