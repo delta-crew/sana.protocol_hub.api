@@ -10,11 +10,12 @@ class OrganizationGroup(PHMixin, Base):
             db.Integer,
             db.ForeignKey('ph_organizations.id', ondelete='CASCADE'))
     name = db.Column(db.String(50))
-    manage_mds = db.Column(db.Boolean)
-    manage_mds_protocols = db.Column(db.Boolean)
-    synchronize_mds = db.Column(db.Boolean)
-    manage_groups = db.Column(db.Boolean)
-    manage_members = db.Column(db.Boolean)
+    manage_protocols = db.Column(db.Boolean, default=False)
+    manage_mds = db.Column(db.Boolean, default=False)
+    manage_mds_protocols = db.Column(db.Boolean, default=False)
+    synchronize_mds = db.Column(db.Boolean, default=False)
+    manage_groups = db.Column(db.Boolean, default=False)
+    manage_members = db.Column(db.Boolean, default=False)
     # rest of permissions...
 
     organization = relationship("Organization", back_populates="groups")

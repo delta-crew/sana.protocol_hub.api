@@ -5,6 +5,8 @@ from app.middleware import SessionWrapper, JSendTranslator
 from resources import (
     ProtocolsResource,
     ProtocolResource,
+    SharedProtocolsResource,
+    SharedProtocolResource,
     PublicProtocolsResource,
     ProtocolVersionsResource,
     ProtocolVersionResource,
@@ -37,13 +39,19 @@ app = falcon.API(
 # Protocols
 protocol = ProtocolResource()
 protocols = ProtocolsResource()
-public_protocols = PublicProtocolsResource()
 
 app.add_route('/protocols/', protocols)
-app.add_route('/protocols/public', public_protocols)
 app.add_route('/protocols/{protocol_id}', protocol)
-app.add_route('/organizations/{organization_id}/protocols/', protocols)
-app.add_route('/organizations/{organization_id}/protocols/{protocol_id}', protocol)
+
+# Public Protocols
+public_protocols = PublicProtocolsResource()
+app.add_route('/protocols/public', public_protocols)
+
+# Shared Protocols
+shared_protocol = SharedProtocolResource()
+shared_protocols = ProtocolsResource()
+app.add_route('/organizations/{organization_id}/protocols/', shared_protocols)
+app.add_route('/organizations/{organization_id}/protocols/{protocol_id}', shared_protocol)
 
 
 # Protocol Versions

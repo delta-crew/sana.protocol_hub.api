@@ -10,20 +10,12 @@ from schemas import ProtocolSchema
 
 class ProtocolsResource(object):
     @falcon.before(login_required)
-    def on_get(self, req, resp, organization_id=None):
+    def on_get(self, req, resp):
         session = req.context['session']
 
-        if organization_id:
-            protocols = session.query(SharedProtocol).\
-                    options(joinedload(SharedProtocol.protocol)).\
-                    filter(SharedProtocol.organization==organization_id).\
-                    all()
-        else:
-            protocols = session.query(Protocol).\
-                    filter(Protocol.user==req.context['user'].id).\
-                    all()
-
-        # TODO make sure this user is authorized to view these protocols
+        protocols = session.query(Protocol).\
+                filter(Protocol.user==req.context['user'].id).\
+                all()
 
         protocol_schema = ProtocolSchema()
         result = protocol_schema.dump(protocol)

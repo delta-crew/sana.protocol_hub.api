@@ -9,7 +9,6 @@ class OrganizationMDSLink(PHMixin, Base):
     organization_id = db.Column(db.Integer, db.ForeignKey("ph_organizations.id"))
     name = db.Column(db.String(50))
     url = db.Column(db.String(100))
-    auth_token = db.Column(db.String(100))
 
     organization = relationship("Organization", back_populates="mds_links")
     protocols = relationship(

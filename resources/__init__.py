@@ -1,5 +1,7 @@
 from resources.protocols import ProtocolsResource
 from resources.protocol import ProtocolResource
+from resources.shared_protocols import SharedProtocolsResource
+from resources.shared_protocol import SharedProtocolResource
 from resources.public_protocols import PublicProtocolsResource
 from resources.protocol_versions import ProtocolVersionsResource
 from resources.protocol_version import ProtocolVersionResource

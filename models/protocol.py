@@ -9,4 +9,4 @@ class Protocol(PHBareMixin, Base):
     id = db.Column(db.Integer, primary_key=True)
     version = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String)
-    public = db.Column(db.Boolean)
+    public = db.Column(db.Boolean, default=False)

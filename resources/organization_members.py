@@ -38,7 +38,7 @@ class OrganizationMembersResource(object):
 
         user = session.query(User).\
                 filter_by(
-                    id=data['user_id'],
+                    id=data['userId'],
                 ).\
                 one_or_none()
 

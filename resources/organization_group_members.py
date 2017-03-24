@@ -51,7 +51,7 @@ class OrganizationGroupMembersResource(object):
 
         gmember = OrganizationGroupMember(
             organization_id=organization_id,
-            organization_member_id=data['organization_member_id'],
+            organization_member_id=data['memberId'],
             organization_group_id=group_id,
         )
 
