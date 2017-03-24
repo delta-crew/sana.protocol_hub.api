@@ -16,6 +16,7 @@ class OrganizationGroup(PHMixin, Base):
     synchronize_mds = db.Column(db.Boolean, default=False)
     manage_groups = db.Column(db.Boolean, default=False)
     manage_members = db.Column(db.Boolean, default=False)
+    manage_ownership = db.Column(db.Boolean, default=False)
     # rest of permissions...
 
     organization = relationship("Organization", back_populates="groups")
