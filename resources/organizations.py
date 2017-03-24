@@ -3,11 +3,24 @@ import falcon
 
 from app import db
 from app.constants import SUCCESS_RESPONSE, FAIL_RESPONSE
-from models import Organization
+from models import Organization, OrganizationMember
 from schemas import OrganizationSchema
 
 
 class OrganizationsResource(object):
+    @falcon.before(login_required)
+    def on_get(self, req, res):
+        organization_schema = OrganizationSchema()
+        session = req.context['session']
+        user = resp.context['user']
+
+        organizations = session.query(OrganizationMember.organization).\
+                filter(OrganizationMember.user_id==user.id).\
+                all()
+
+        result = organization_schema.dump(organizations)
+        resp.conext['result'] = result.data
+
     @falcon.before(login_required)
     def on_post(self, req, res):
         organization_schema = OrganizationSchema()
@@ -22,9 +35,12 @@ class OrganizationsResource(object):
             return
 
         organization = Organization(name=data['name'], owner_id=user.id)
-        organization.members.append(OrganizationMember(user_id=user.id))
 
         session.add(organization)
+        session.commit()
+
+        organization.members.append(OrganizationMember(user_id=user.id))
+
         session.commit()
 
         result = organization_schema.dump(organization)
