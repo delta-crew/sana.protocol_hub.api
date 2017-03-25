@@ -1,3 +1,5 @@
+from resources.me import MeResource
+from resources.users import UsersResource
 from resources.protocols import ProtocolsResource
 from resources.protocol import ProtocolResource
 from resources.shared_protocols import SharedProtocolsResource

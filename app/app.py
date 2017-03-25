@@ -3,6 +3,8 @@ import json
 
 from app.middleware import SessionWrapper, JSendTranslator
 from resources import (
+    MeResource,
+    UsersResource,
     ProtocolsResource,
     ProtocolResource,
     SharedProtocolsResource,
@@ -33,8 +35,11 @@ app = falcon.API(
 )
 
 # Users
-# ...
+me = MeResource()
+users = UsersResource()
 
+app.add_route('/users/', users)
+app.add_route('/users/me', me)
 
 # Protocols
 protocol = ProtocolResource()

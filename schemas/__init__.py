@@ -1,3 +1,4 @@
+from schemas.user import UserSchema
 from schemas.protocol import ProtocolSchema
 from schemas.organization import OrganizationSchema
 from schemas.organization_member import OrganizationMemberSchema
