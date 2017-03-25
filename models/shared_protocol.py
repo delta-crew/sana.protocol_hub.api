@@ -10,14 +10,19 @@ class SharedProtocol(PHMixin, Base):
         UniqueConstraint("protocol_id", "organization_id", name="po_1"),
     )
 
-    protocol_id = db.Column(db.Integer, db.ForeignKey("ph_protocols.id"))
-    protocol_version = db.Column(db.Integer, db.ForeignKey("ph_protocols.version"))
+    protocol_id = db.Column(db.Integer)
+    protocol_version = db.Column(db.Integer)
     organization_id = db.Column(db.Integer, db.ForeignKey("ph_organizations.id"))
+
+    db.ForeignKeyConstraint(
+            [protocol_id, protocol_version],
+            ["ph_protocols.id", "ph_protocols.version"],
+            ondelete="CASCADE")
 
     protocol = relationship(
             "Protocol",
             backref="shared_versions",
-            foreign_keys=[protocol_version, organization_id],
+            foreign_keys=[protocol_version, protocol_id],
     )
     organization = relationship(
             "Organization",
