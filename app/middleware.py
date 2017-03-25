@@ -24,18 +24,17 @@ class JSendTranslator(object):
         if req.method == 'OPTIONS':
             return
 
-        if 'result' not in resp.context:
-            raise ResponseError('Missing response schema!')
-        result = resp.context['result']
-
         resp_type = SUCCESS_RESPONSE
         if 'type' in resp.context:
             resp_type = resp.context['type']
 
+        if 'result' not in resp.context and resp_type != ERROR_RESPONSE:
+            raise ResponseError('Missing response schema!')
+
         if resp_type == SUCCESS_RESPONSE:
-            result = self.success_response(result)
+            result = self.success_response(resp.context['result'])
         elif resp_type == FAIL_RESPONSE:
-            result = self.fail_response(result)
+            result = self.fail_response(resp.context['result'])
         elif resp_type == ERROR_RESPONSE:
             error_message = 'Unknown Error'
             if 'error_message' in resp.context:

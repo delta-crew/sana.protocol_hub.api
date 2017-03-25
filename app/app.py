@@ -2,7 +2,9 @@ import falcon
 from falcon_cors import CORS
 import json
 
+from app.handlers import generic_error
 from app.middleware import SessionWrapper, JSendTranslator, BodyParser
+from app.sinks import route_not_found
 from resources import (
     MeResource,
     UsersResource,
@@ -142,3 +144,8 @@ app.add_route(
     '/organizations/{organization_id}/mds_links/{mds_link_id}/synchronize',
     organization_mds_link_synchronize
 )
+# Unmatched routes
+app.add_sink(route_not_found, '')
+
+# Generic unhandled errors
+app.add_error_handler(Exception, generic_error)
