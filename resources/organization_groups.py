@@ -10,8 +10,8 @@ from schemas import OrganizationGroupSchema
 class OrganizationGroupsResource(object):
     @falcon.before(login_required)
     @falcon.before(user_belongs_to_organization)
-    def on_get(self, req, res, organization_id):
-        organization_group_schema = OrganizationGroupSchema()
+    def on_get(self, req, resp, organization_id):
+        organization_group_schema = OrganizationGroupSchema(many=True)
         session = req.context['session']
 
         # TODO pagination?
@@ -24,22 +24,22 @@ class OrganizationGroupsResource(object):
 
     @falcon.before(login_required)
     @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_groups))
-    def on_post(self, req, res, organization_id):
+    def on_post(self, req, resp, organization_id):
         schema = OrganizationGroupSchema()
         session = req.context['session']
-        user = resp.context['user']
+        user = req.context['user']
 
-        data, errors = schema.load(req.context['body'])
+        group, errors = schema.load(req.context['body'], session=session)
         if errors:
             resp.stats = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = errors
             return
 
-        # TODO splatting this is probably not super safe
-        group = OrganizationGroup(**data)
+        group.organization_id = organization_id
+
         session.add(group)
         session.commit()
 
         result = schema.dump(group)
-        resp.conext['result'] = result.data
+        resp.context['result'] = result.data
