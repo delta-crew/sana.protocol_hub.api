@@ -17,7 +17,7 @@ def authorize_organization_user_to(permission):
 
     def helper(req, resp, resource, params):
         session = req.context['session']
-        user = resp.context['user']
+        user = req.context['user']
 
         organization_id = params['organization_id']
         organization = session.query(Organization).get(organization_id)
@@ -39,7 +39,7 @@ def authorize_organization_user_to(permission):
 
 def user_belongs_to_organization(req, resp, resource, params):
     session = req.context['session']
-    user = resp.context['user']
+    user = req.context['user']
 
     organization_id = params['organization_id']
     has_permissions = session.query(OrganizationMember).\

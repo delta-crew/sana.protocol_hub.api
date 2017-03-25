@@ -19,7 +19,7 @@ class OrganizationGroup(PHMixin, Base):
     manage_ownership = db.Column(db.Boolean, default=False)
     # rest of permissions...
 
-    organization = relationship("Organization", back_populates="groups")
+    organization = relationship("Organization")
     members = relationship(
             "OrganizationMember",
             secondary="ph_organization_group_members",

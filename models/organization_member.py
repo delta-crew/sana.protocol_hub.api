@@ -18,6 +18,7 @@ class OrganizationMember(PHMixin, Base):
             db.ForeignKey("auth_user.id"))
 
     user = relationship("User")
+    organization = relationship("Organization")
     groups = relationship(
             "OrganizationGroup",
             secondary="ph_organization_group_members",

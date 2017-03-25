@@ -9,39 +9,42 @@ from schemas import OrganizationSchema
 
 class OrganizationsResource(object):
     @falcon.before(login_required)
-    def on_get(self, req, res):
-        organization_schema = OrganizationSchema()
+    def on_get(self, req, resp):
+        organization_schema = OrganizationSchema(many=True)
         session = req.context['session']
-        user = resp.context['user']
+        user = req.context['user']
 
-        organizations = session.query(OrganizationMember.organization).\
+        organizations = session.query(Organization).\
+                join(OrganizationMember).\
                 filter(OrganizationMember.user_id==user.id).\
                 all()
 
         result = organization_schema.dump(organizations)
-        resp.conext['result'] = result.data
+        resp.context['result'] = result.data
 
     @falcon.before(login_required)
-    def on_post(self, req, res):
+    def on_post(self, req, resp):
         organization_schema = OrganizationSchema()
         session = req.context['session']
-        user = resp.context['user']
+        user = req.context['user']
 
-        data, errors = organization_schema.load(req.context['body'])
+        organization, errors = organization_schema.load(
+            req.context['body'], session=session)
         if errors:
             resp.stats = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = errors
             return
 
-        organization = Organization(name=data['name'], owner_id=user.id)
+        organization.owner_id = user.id
+
 
         session.add(organization)
         session.commit()
 
-        organization.members.append(OrganizationMember(user_id=user.id))
-
+        member = OrganizationMember(user_id=user.id, organization_id=organization.id)
+        session.add(member)
         session.commit()
 
         result = organization_schema.dump(organization)
-        resp.conext['result'] = result.data
+        resp.context['result'] = result.data

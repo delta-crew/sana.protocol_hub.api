@@ -87,8 +87,8 @@ app.add_route('/organizations/{organization_id}', organization)
 organization_members = OrganizationMembersResource()
 organization_member = OrganizationMemberResource()
 
-app.add_route('/organizations/', organization_members)
-app.add_route('/organizations/{organization_id}', organization_member)
+app.add_route('/organizations/{organization_id}/members', organization_members)
+app.add_route('/organizations/{organization_id}/members/{member_id}', organization_member)
 
 
 # Organization Groups
