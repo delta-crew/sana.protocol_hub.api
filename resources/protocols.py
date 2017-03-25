@@ -17,7 +17,7 @@ class ProtocolsResource(object):
                 filter(Protocol.user==req.context['user'].id).\
                 all()
 
-        protocol_schema = ProtocolSchema()
+        protocol_schema = ProtocolSchema(many=True)
         result = protocol_schema.dump(protocol)
         resp.context['result'] = result.data
 

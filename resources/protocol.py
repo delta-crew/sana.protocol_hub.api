@@ -42,20 +42,6 @@ class ProtocolResource(object):
         session.add(protocol)
         session.commit()
 
-        # TODO are we going to update all references to this protocol to the
-        # latest version?
-        if protocol.public:
-            session.query(SharedProtocol).\
-                    filter(
-                            SharedProtocol.protocol_id==protocol.id,
-                            SharedProtocol.organization_id.in_(
-                                session.query(OrganizationMember.organization_id).\
-                                        filter(OrganizationMember.member_id==user.id)
-                            )
-                    ).\
-                    update({'synchronized_version': protocol.version})
-            session.commit()
-
         protocol_schema = ProtocolSchema()
         result = protocol_schema.dump(protocol)
 
