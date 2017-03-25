@@ -21,6 +21,9 @@ class SessionWrapper(object):
 
 class JSendTranslator(object):
     def process_response(self, req, resp, resource):
+        if req.method == 'OPTIONS':
+            return
+
         if 'result' not in resp.context:
             raise ResponseError('Missing response schema!')
         result = resp.context['result']

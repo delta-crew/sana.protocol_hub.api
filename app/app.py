@@ -2,7 +2,7 @@ import falcon
 from falcon_cors import CORS
 import json
 
-from app.middleware import SessionWrapper, JSendTranslator
+from app.middleware import SessionWrapper, JSendTranslator, BodyParser
 from resources import (
     MeResource,
     UsersResource,
@@ -28,13 +28,15 @@ from resources import (
     OrganizationMDSLinkSynchronizeResource,
 )
 
-cors = CORS(allow_all_origins=True)
+cors = CORS(
+    allow_all_origins=True, allow_all_methods=True, allow_all_headers=True)
 
 app = falcon.API(
     middleware=[
-        SessionWrapper(),
-        JSendTranslator(),
         cors.middleware,
+        SessionWrapper(),
+        BodyParser(),
+        JSendTranslator(),
     ]
 )
 

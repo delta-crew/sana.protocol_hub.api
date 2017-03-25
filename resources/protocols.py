@@ -22,21 +22,18 @@ class ProtocolsResource(object):
         resp.context['result'] = result.data
 
     @falcon.before(login_required)
-    def on_post(self, req, res):
+    def on_post(self, req, resp):
         # TODO how do we get the protocol and its XML from the builder...
         schema = ProtocolSchema()
         session = req.context['session']
-        user = resp.context['user']
+        user = req.context['user']
 
-        data, errors = schema.load(req.context['body'])
+        protocol, errors = schema.load(req.context['body'], session=session)
         if errors:
             resp.stats = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = errors
             return
-
-        # TODO splatting this is probably not super safe
-        protocol = Protocol(**data)
 
         session.add(protocol)
         session.commit()
@@ -56,4 +53,4 @@ class ProtocolsResource(object):
             session.commit()
 
         result = schema.dump(protocol)
-        resp.conext['result'] = result.data
+        resp.context['result'] = result.data
