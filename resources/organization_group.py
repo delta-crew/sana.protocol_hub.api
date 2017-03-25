@@ -9,7 +9,7 @@ from schemas import OrganizationGroupSchema
 class OrganizationGroupResource(object):
     @falcon.before(login_required)
     @falcon.before(user_belongs_to_organization)
-    def on_get(self, req, res, organization_id, group_id):
+    def on_get(self, req, resp, organization_id, group_id):
         session = req.context['session']
         organization_group_schema = OrganizationGroupSchema()
 
@@ -20,47 +20,46 @@ class OrganizationGroupResource(object):
 
     @falcon.before(login_required)
     @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_groups))
-    def on_delete(self, req, res, organization_id, group_id):
+    def on_delete(self, req, resp, organization_id, group_id):
         session = req.context['session']
 
-        group = session.query(OrganizationGroup).\
-                filter_by(id=group_id, organization_id=organization_id).\
-                one()
-
-        if group != None:
-            session.delete(group)
-            session.commit()
-
-    @falcon.before(login_required)
-    @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_groups))
-    def on_put(self, req, res, organization_id, group_id):
-        session = req.context['session']
-        organization_group_schema = OrganizationGroupSchema()
-
-        group = session.query(OrganizationGroup).\
-                filter_by(
-                    organization_id=organization_id,
-                    id=group_id,
-                ).\
-                one_or_none()
+        group = session.query(OrganizationGroup).get(group_id)
 
         if group == None:
             resp.status = falcon.HTTP_NOT_FOUND
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = {
-                'mds_link': 'no mds link with id {}'.format(mds_link_id),
+                'group': 'no group with id {}'.format(group_id),
             }
             return
 
-        # TODO can the schema make this nicer?
-        group.name = req.data['name']
-        group.manage_protocols = req.data['manage_protocols']
-        group.manage_mds = req.data['manage_mds']
-        group.manage_mds_protocols = req.data['manage_mds_protocols']
-        group.synchronize_mds = req.data['synchronize_mds']
-        group.manage_groups = req.data['manage_groups']
-        group.manage_members = req.data['manage_members']
-        group.manage_ownership = req.data['manage_ownership']
+        session.delete(group)
+        session.commit()
+        resp.context['result'] = {}
+
+    @falcon.before(login_required)
+    @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_groups))
+    def on_put(self, req, resp, organization_id, group_id):
+        session = req.context['session']
+        organization_group_schema = OrganizationGroupSchema()
+
+        group = session.query(OrganizationGroup).get(group_id)
+
+        if group == None:
+            resp.status = falcon.HTTP_NOT_FOUND
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = {
+                'group': 'no group with id {}'.format(group_id),
+            }
+            return
+
+        new_group, errors = organization_group_schema.load(
+            req.context['body'], instance=group, session=session)
+        if errors:
+            resp.status = falcon.HTTP_BAD_REQUEST
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = errors
+            return
 
         session.add(group)
         session.commit()
