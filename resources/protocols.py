@@ -14,16 +14,15 @@ class ProtocolsResource(object):
         session = req.context['session']
 
         protocols = session.query(Protocol).\
-                filter(Protocol.user==req.context['user'].id).\
+                filter(Protocol.user_id==req.context['user'].id).\
                 all()
 
         protocol_schema = ProtocolSchema(many=True)
-        result = protocol_schema.dump(protocol)
+        result = protocol_schema.dump(protocols)
         resp.context['result'] = result.data
 
     @falcon.before(login_required)
     def on_post(self, req, resp):
-        # TODO how do we get the protocol and its XML from the builder...
         schema = ProtocolSchema()
         session = req.context['session']
         user = req.context['user']
@@ -35,8 +34,9 @@ class ProtocolsResource(object):
             resp.context['result'] = errors
             return
 
+        protocol.user = user
+
         session.add(protocol)
-        session.commit()
 
         # TODO are we going to update all references to this protocol to the
         # latest version?
@@ -46,10 +46,17 @@ class ProtocolsResource(object):
                             SharedProtocol.protocol_id==protocol.id,
                             SharedProtocol.organization_id.in_(
                                 session.query(OrganizationMember.organization_id).\
-                                        filter(OrganizationMember.member_id==user.id)
+                                        filter(OrganizationMember.user_id==user.id)
                             )
                     ).\
-                    update({'synchronized_version': protocol.version})
+                    update({'protocol_version': protocol.version}, synchronize_session='fetch')
+
+        session.commit()
+
+        previous_version = protocol.previous_version(session)
+        if previous_version is not None and previous_version.public:
+            protocol.public = True
+            session.add(protocol)
             session.commit()
 
         result = schema.dump(protocol)

@@ -11,3 +11,11 @@ class Protocol(PHBareMixin, Base):
     title = db.Column(db.String)
     content = db.Column(db.String)
     public = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("auth_user.id"))
+
+    user = relationship("User", backref="protocols")
+
+    def previous_version(self, session):
+        if self.version == 1:
+            return None
+        return session.query(Protocol).filter_by(version=self.version-1).first()
