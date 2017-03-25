@@ -12,13 +12,18 @@ class ProtocolVersionResource(object):
     @falcon.before(login_required)
     def on_get(self, req, resp, protocol_id, version_id):
         session = req.context['session']
+        protocol = session.query(Protocol).filter_by(
+            id=protocol_id, version=version_id).first()
+        if protocol == None:
+            resp.status = falcon.HTTP_NOT_FOUND
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = {
+                'protocol': 'no protocol with id {} and version {}'.format(
+                    protocol_id, version_id),
+            }
+            return
 
-        protocol = session.query(Protocol).\
-                filter(Protocol.id==protocol_id).\
-                filter(Protocol.version==version_id).\
-                one()
-
-        # TODO make sure user is authorized to view this protocol
+        # TODO authorize that this user can view this protocol
 
         protocol_schema = ProtocolSchema()
         result = protocol_schema.dump(protocol)

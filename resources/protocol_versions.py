@@ -11,14 +11,19 @@ from schemas import ProtocolSchema
 class ProtocolVersionsResource(object):
     @falcon.before(login_required)
     def on_get(self, req, resp, protocol_id):
-        protocol_schema = ProtocolSchema()
         session = req.context['session']
+        protocols = session.query(Protocol).filter_by(id=protocol_id)
+        if protocols == None:
+            resp.status = falcon.HTTP_NOT_FOUND
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = {
+                'protocol': 'no protocol with id {}'.format(protocol_id),
+            }
+            return
 
-        protocols = session.query(Protocol).\
-                filter(Protocol.id==protocol_id).\
-                all()
+        # TODO authorize that this user can view this protocol
 
-        # TODO make sure user is authorized to view this protocol's versions
+        protocol_schema = ProtocolSchema(many=True)
+        result = protocol_schema.dump(protocols)
 
-        data = protocol_schema.dump(protocols)
         resp.context['result'] = result.data
