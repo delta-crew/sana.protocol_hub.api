@@ -8,7 +8,7 @@ from schemas import UserSchema
 
 class MeResource(object):
     @falcon.before(login_required)
-    def on_get(self, req, resp, user_id):
+    def on_get(self, req, resp):
         user = req.context['user']
 
         user_schema = UserSchema()
