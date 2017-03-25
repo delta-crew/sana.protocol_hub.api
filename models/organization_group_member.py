@@ -1,4 +1,5 @@
 import sqlalchemy as db
+from sqlalchemy.orm import relationship
 from models.base import Base, PHBareMixin
 
 
@@ -13,3 +14,6 @@ class OrganizationGroupMember(PHBareMixin, Base):
             db.Integer,
             db.ForeignKey('ph_organization_members.id', ondelete='CASCADE'),
             primary_key=True)
+
+    group = relationship("OrganizationGroup")
+    member = relationship("OrganizationMember")

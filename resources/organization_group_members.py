@@ -10,13 +10,16 @@ from schemas import OrganizationGroupMemberSchema
 class OrganizationGroupMembersResource(object):
     @falcon.before(login_required)
     @falcon.before(user_belongs_to_organization)
-    def on_get(self, req, res, organization_id, group_id):
-        organization_group_member_schema = OrganizationGroupMemberSchema()
+    def on_get(self, req, resp, organization_id, group_id):
+        organization_group_member_schema = OrganizationGroupMemberSchema(many=True)
         session = req.context['session']
 
         # TODO pagination?
         members = session.query(OrganizationGroupMember).\
-                filter_by(organization_id=organization_id, group_id=group_id).\
+                join(OrganizationGroup).\
+                filter(
+                    OrganizationGroup.organization_id==organization_id,
+                    OrganizationGroupMember.organization_group_id==group_id).\
                 all()
 
         result = organization_group_member_schema.dump(members)
@@ -24,22 +27,25 @@ class OrganizationGroupMembersResource(object):
 
     @falcon.before(login_required)
     @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_groups))
-    def on_post(self, req, res, organization_id, group_id):
+    def on_post(self, req, resp, organization_id, group_id):
         organization_group_member_schema = OrganizationGroupMemberSchema()
         session = req.context['session']
-        user = resp.context['user']
+        user = req.context['user']
 
-        data, errors = organization_group_member_schema.load(req.context['body'])
+        group_member, errors = organization_group_member_schema.load(
+            req.context['body'], session=session)
         if errors:
             resp.stats = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = errors
             return
 
+        group_member.organization_group_id = group_id
+
         member = session.query(OrganizationMember).\
                 filter_by(
                     organization_id=organization_id,
-                    id=data['organization_member_id'],
+                    id=group_member.member.id,
                 ).\
                 one_or_none()
 
@@ -49,14 +55,16 @@ class OrganizationGroupMembersResource(object):
             resp.context['result'] = {'member_id': 'member not found'}
             return
 
-        gmember = OrganizationGroupMember(
-            organization_id=organization_id,
-            organization_member_id=data['memberId'],
-            organization_group_id=group_id,
-        )
+        group = session.query(OrganizationGroup).get(group_id)
 
-        session.add(gmember)
+        if group == None:
+            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = {'group_id': 'group not found'}
+            return
+
+        session.add(group_member)
         session.commit()
 
-        result = organization_group_member_schema.dump(organization)
-        resp.conext['result'] = result.data
+        result = organization_group_member_schema.dump(group_member)
+        resp.context['result'] = result.data
