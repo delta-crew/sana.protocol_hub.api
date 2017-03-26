@@ -63,6 +63,7 @@ class OrganizationMDSLinkProtocolsResource(object):
             return
 
         mds_link_protocol.protocol = protocol.protocol
+        mds_link_protocol.synchronized_version = 0
 
         session.add(mds_link_protocol)
         session.commit()

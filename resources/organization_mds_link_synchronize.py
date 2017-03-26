@@ -38,6 +38,7 @@ class OrganizationMDSLinkSynchronizeResource(object):
             r = requests.post(url, data=data, files=files)
             if r.status_code == 200:
                 old_protocol.synchronized_version = protocol.protocol_version
+                old_protocol.protocol = protocol.protocol
                 session.add(old_protocol)
                 session.commit()
                 return True

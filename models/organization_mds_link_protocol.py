@@ -13,11 +13,13 @@ class OrganizationMDSLinkProtocol(PHMixin, Base):
     protocol_id = db.Column(
             db.Integer,
             nullable=False)
+    protocol_version = db.Column(
+            db.Integer)
     synchronized_version = db.Column(
             db.Integer)
 
     db.ForeignKeyConstraint(
-            [protocol_id, synchronized_version],
+            [protocol_id, protocol_version],
             ["ph_protocols.id", "ph_protocols.version"],
             ondelete="CASCADE")
 
