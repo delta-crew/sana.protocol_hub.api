@@ -53,7 +53,7 @@ class OrganizationMDSLinkProtocolsResource(object):
 
         protocol = session.query(SharedProtocol).\
                 filter(SharedProtocol.protocol_id==mds_link_protocol.protocol.id).\
-                filter(SharedProtocol.protocol_version==mds_link_protocol.protocol.version).\
+                order_by(desc(SharedProtocol.protocol_version)).\
                 first()
 
         if protocol == None:
@@ -61,6 +61,8 @@ class OrganizationMDSLinkProtocolsResource(object):
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = { 'protocol': 'not found' }
             return
+
+        mds_link_protocol.protocol = protocol.protocol
 
         session.add(mds_link_protocol)
         session.commit()

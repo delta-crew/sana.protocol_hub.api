@@ -14,6 +14,13 @@ class OrganizationGroupResource(object):
         organization_group_schema = OrganizationGroupSchema()
 
         group = session.query(OrganizationGroup).get(group_id)
+        if group == None:
+            resp.status = falcon.HTTP_NOT_FOUND
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = {
+                'group': 'no group with id {}'.format(group_id),
+            }
+            return
 
         result = organization_group_schema.dump(group)
         resp.context['result'] = result.data

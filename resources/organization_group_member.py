@@ -9,16 +9,24 @@ from models import OrganizationGroupMember
 class OrganizationGroupMemberResource(object):
     @falcon.before(login_required)
     @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_groups))
-    def on_delete(self, req, res, organization_id, group_id, member_id):
+    def on_delete(self, req, resp, organization_id, group_id, user_id):
         session = req.context['session']
 
         member = session.query(OrganizationGroupMember).\
                 filter_by(
-                    organization_member_id=member_id,
+                    organization_member_id=user_id,
                     organization_group_id=group_id,
                 ).\
-                one()
+                first()
 
-        if member != None:
-            session.delete(member)
-            session.commit()
+        if member == None:
+            resp.status = falcon.HTTP_NOT_FOUND
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = {
+                'member': 'no member with id {}'.format(user_id),
+            }
+            return
+
+        session.delete(member)
+        session.commit()
+        resp.context['result'] = {}

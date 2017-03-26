@@ -4,7 +4,7 @@ import falcon
 from app import db
 from app.constants import SUCCESS_RESPONSE, FAIL_RESPONSE
 from sqlalchemy.orm import joinedload
-from models import SharedProtocol
+from models import Protocol, SharedProtocol
 from schemas import ProtocolSchema
 
 
@@ -14,9 +14,9 @@ class SharedProtocolResource(object):
     def on_get(self, req, resp, organization_id, protocol_id):
         session = req.context['session']
 
-        protocol = session.query(SharedProtocol.protocol).\
-            options(joinedload(SharedProtocol.protocol)).\
-            filter_by(
+        protocol = session.query(Protocol).\
+            join(SharedProtocol).\
+            filter(
                 SharedProtocol.protocol_id==protocol_id,
                 SharedProtocol.organization_id==organization_id,
             ).\
@@ -40,10 +40,18 @@ class SharedProtocolResource(object):
     def on_delete(self, req, resp, organization_id, protocol_id):
         session = req.context['session']
 
-        group = session.query(SharedProtocol).\
+        protocol = session.query(SharedProtocol).\
                 filter_by(protocol_id=protocol_id, organization_id=organization_id).\
-                one()
+                first()
 
-        if group != None:
-            session.delete(group)
-            session.commit()
+        if protocol is None:
+            resp.status = falcon.HTTP_NOT_FOUND
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = {
+                'group': 'no group with id {}'.format(group_id),
+            }
+            return
+
+        session.delete(protocol)
+        session.commit()
+        resp.context['result'] = {}

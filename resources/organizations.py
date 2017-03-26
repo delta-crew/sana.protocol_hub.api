@@ -38,7 +38,6 @@ class OrganizationsResource(object):
 
         organization.owner_id = user.id
 
-
         session.add(organization)
         session.commit()
 

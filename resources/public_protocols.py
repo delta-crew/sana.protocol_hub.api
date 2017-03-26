@@ -9,10 +9,10 @@ from schemas import ProtocolSchema
 
 
 class PublicProtocolsResource(object):
-    def on_get(self, req, resp, organization_id):
+    def on_get(self, req, resp):
         session = req.context['session']
-        query = req.params.get('query', default='')
-        protocol_schema = ProtocolSchema()
+        query = req.params.get('query', '')
+        protocol_schema = ProtocolSchema(many=True)
 
         protocols = session.query(Protocol).\
                 filter(
@@ -21,5 +21,5 @@ class PublicProtocolsResource(object):
                 ).\
                 all()
 
-        data = protocol_schema.dump(protocols)
+        result = protocol_schema.dump(protocols)
         resp.context['result'] = result.data

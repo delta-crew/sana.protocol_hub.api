@@ -28,7 +28,6 @@ class SharedProtocolsResource(object):
     @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_protocols))
     def on_post(self, req, resp, organization_id):
         session = req.context['session']
-        user = req.context['user']
         schema = SharedProtocolSchema()
 
         shared_protocol, errors = schema.load(req.context['body'], session=session)
@@ -40,16 +39,16 @@ class SharedProtocolsResource(object):
 
         shared_protocol.organization_id = organization_id
 
-        current = session.query(Protocol).\
+        protocol = session.query(Protocol).\
             filter_by(
                 id=shared_protocol.protocol.id,
                 version=shared_protocol.protocol.version).\
             first()
 
-        if current == None:
+        if protocol == None:
             resp.stats = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
-            resp.context['result'] = {'protocol_id': 'not found'}
+            resp.context['result'] = {'protocol_id': 'no protocol with id {}'.format(shared_protocol.protocol.id)}
             return
 
         session.add(shared_protocol)

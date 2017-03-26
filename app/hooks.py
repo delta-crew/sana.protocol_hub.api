@@ -21,6 +21,11 @@ def authorize_organization_user_to(permission):
 
         organization_id = params['organization_id']
         organization = session.query(Organization).get(organization_id)
+        if organization == None:
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = {'organization': 'no organization with id {}'.format(organization_id)}
+            raise falcon.HTTPNotFound()
+
         if user != organization.owner:
             has_permissions = session.query(OrganizationGroup).\
                     join(OrganizationGroupMember).\
