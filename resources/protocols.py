@@ -37,21 +37,20 @@ class ProtocolsResource(object):
         protocol.user = user
 
         session.add(protocol)
+        session.commit()
 
         # TODO are we going to update all references to this protocol to the
         # latest version?
-        if protocol.public:
+        if not protocol.public:
             session.query(SharedProtocol).\
                     filter(
-                            SharedProtocol.protocol_id==protocol.id,
-                            SharedProtocol.organization_id.in_(
-                                session.query(OrganizationMember.organization_id).\
-                                        filter(OrganizationMember.user_id==user.id)
-                            )
+                        SharedProtocol.protocol_id==protocol.id,
+                        SharedProtocol.organization_id.in_(
+                            session.query(OrganizationMember.organization_id).\
+                                    filter(OrganizationMember.user_id==user.id)
+                        )
                     ).\
-                    update({'protocol_version': protocol.version}, synchronize_session='fetch')
-
-        session.commit()
+                    update({'protocol_version': protocol.version}, synchronize_session=False)
 
         previous_version = protocol.previous_version(session)
         if previous_version is not None and previous_version.public:
@@ -59,5 +58,6 @@ class ProtocolsResource(object):
             session.add(protocol)
             session.commit()
 
+        session.commit()
         result = schema.dump(protocol)
         resp.context['result'] = result.data
