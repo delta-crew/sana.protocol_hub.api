@@ -3,6 +3,7 @@ import falcon
 
 from app import db
 from app.constants import SUCCESS_RESPONSE, FAIL_RESPONSE
+from sqlalchemy.orm import joinedload
 from models import OrganizationMember, User
 from schemas import OrganizationMemberSchema
 
@@ -11,11 +12,14 @@ class OrganizationMembersResource(object):
     @falcon.before(login_required)
     @falcon.before(user_belongs_to_organization)
     def on_get(self, req, resp, organization_id):
-        organization_member_schema = OrganizationMemberSchema(many=True)
+        organization_member_schema = OrganizationMemberSchema(
+                only=('id', 'user.first_name', 'user.last_name', 'user.username'),
+                many=True)
         session = req.context['session']
 
         # TODO pagination?
         members = session.query(OrganizationMember).\
+                options(joinedload(OrganizationMember.user)).\
                 filter_by(organization_id=organization_id).\
                 all()
 
