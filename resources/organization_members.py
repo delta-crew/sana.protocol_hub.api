@@ -41,7 +41,7 @@ class OrganizationMembersResource(object):
 
         user = session.query(User).\
                 filter_by(
-                    id=member.user.id,
+                    id=req.context['body']['user_id']
                 ).\
                 one_or_none()
 
@@ -52,6 +52,7 @@ class OrganizationMembersResource(object):
             return
 
         member.organization_id = organization_id
+        member.user_id = user.id
 
         session.add(member)
         session.commit()
