@@ -19,6 +19,7 @@ class UsersResource(object):
                     User.last_name.ilike('%' + query + '%'),
                     User.first_name.ilike('%' + query + '%'),
                 )).\
+                limit(100).\
                 all()
 
         result = user_schema.dump(users)

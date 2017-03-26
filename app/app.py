@@ -148,4 +148,4 @@ app.add_route(
 app.add_sink(route_not_found, '')
 
 # Generic unhandled errors
-app.add_error_handler(Exception, generic_error)
+# app.add_error_handler(Exception, generic_error)
