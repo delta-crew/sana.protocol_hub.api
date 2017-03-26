@@ -34,15 +34,11 @@ class ProtocolResource(object):
         session = req.context['session']
         user = resp.context['user']
 
-        # TODO splatting this is probably not super safe
-        protocol = session.query(Protocol).get(protocol_id)
+        public = bool(req.data['public'])
+        session.query(Protocol).\
+                filter(Protocol.id==protocol_id).\
+                update({ 'public': public })
 
-        protocol.public = bool(req.data['public'])
-
-        session.add(protocol)
         session.commit()
 
-        protocol_schema = ProtocolSchema()
-        result = protocol_schema.dump(protocol)
-
-        resp.context['result'] = result.data
+        resp.context['result'] = {}
