@@ -10,7 +10,7 @@ from schemas import OrganizationMDSLinkSchema
 class OrganizationMDSLinkResource(object):
     @falcon.before(login_required)
     @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_mds))
-    def on_get(self, req, res, organization_id, mds_link_id):
+    def on_get(self, req, resp, organization_id, mds_link_id):
         session = req.context['session']
         organization_mds_link_schema = OrganizationMDSLinkSchema()
 
@@ -34,7 +34,7 @@ class OrganizationMDSLinkResource(object):
 
     @falcon.before(login_required)
     @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_mds))
-    def on_delete(self, req, res, organization_id, mds_link_id):
+    def on_delete(self, req, resp, organization_id, mds_link_id):
         session = req.context['session']
 
         mds = session.query(OrganizationMDSLink).\
@@ -44,13 +44,21 @@ class OrganizationMDSLinkResource(object):
                 ).\
                 one_or_none()
 
-        if mds != None:
-            session.delete(mds)
-            session.commit()
+        if mds == None:
+            resp.status = falcon.HTTP_NOT_FOUND
+            resp.context['type'] = FAIL_RESPONSE
+            resp.context['result'] = {
+                'mds_link': 'no mds link with id {}'.format(mds_link_id),
+            }
+            return
+
+        session.delete(mds)
+        session.commit()
+        resp.context['result'] = {}
 
     @falcon.before(login_required)
     @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_mds))
-    def on_put(self, req, res, organization_id, mds_link_id):
+    def on_put(self, req, resp, organization_id, mds_link_id):
         session = req.context['session']
         organization_mds_link_schema = OrganizationMDSLinkSchema()
 
@@ -69,11 +77,11 @@ class OrganizationMDSLinkResource(object):
             }
             return
 
-        mds.name = req.data['name']
-        mds.url = req.data['url']
+        new_mds, errors = organization_mds_link_schema.load(
+            req.context['body'], instance=mds, session=session)
 
-        session.add(mds)
+        session.add(new_mds)
         session.commit()
 
-        result = organization_mds_link_schema.dump(mds)
+        result = organization_mds_link_schema.dump(new_mds)
         resp.context['result'] = result.data
