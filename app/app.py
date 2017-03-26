@@ -62,7 +62,7 @@ app.add_route('/protocols/public', public_protocols)
 
 # Shared Protocols
 shared_protocol = SharedProtocolResource()
-shared_protocols = ProtocolsResource()
+shared_protocols = SharedProtocolsResource()
 app.add_route('/organizations/{organization_id}/protocols/', shared_protocols)
 app.add_route('/organizations/{organization_id}/protocols/{protocol_id}', shared_protocol)
 

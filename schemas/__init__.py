@@ -1,5 +1,6 @@
 from schemas.user import UserSchema
 from schemas.protocol import ProtocolSchema
+from schemas.shared_protocol import SharedProtocolSchema
 from schemas.organization import OrganizationSchema
 from schemas.organization_member import OrganizationMemberSchema
 from schemas.organization_group import OrganizationGroupSchema
