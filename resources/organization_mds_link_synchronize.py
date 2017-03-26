@@ -21,26 +21,27 @@ class OrganizationMDSLinkSynchronizeResource(object):
         url = urllib.parse.urljoin(mds.url, '/mds/core/procedure/')
 
         # TODO Matt, what do we send here? What HTTP verb? What content type?
-        src = tempfile.TemporaryFile()
-        src.write(str.encode(protocol.protocol.content))
-        src.seek(0)
+        with tempfile.TemporaryFile() as src:
+            src.write(str.encode(protocol.protocol.content))
+            src.seek(0)
 
-        data = {
-            'title': protocol.protocol.title,
-            'version': protocol.protocol_version,
-            'author': '{} {}'.format(user.first_name, user.last_name),
-            'description': 'Uploaded from Protocol Hub',
-        }
-        files = {
-            'src': src,
-        }
+            data = {
+                'title': protocol.protocol.title,
+                'version': protocol.protocol_version,
+                'author': '{} {}'.format(user.first_name, user.last_name),
+                'description': 'Uploaded from Protocol Hub',
+            }
+            files = {
+                'src': src,
+            }
 
-        r = requests.post(url, data=data, files=files)
-        if r.status_code == 200:
-            old_protocol.synchronized_version = protocol.protocol_version
-            session.add(old_protocol)
-            session.commit()
-        src.close()
+            r = requests.post(url, data=data, files=files)
+            if r.status_code == 200:
+                old_protocol.synchronized_version = protocol.protocol_version
+                session.add(old_protocol)
+                session.commit()
+                return True
+            return False
 
     @falcon.before(login_required)
     @falcon.before(authorize_organization_user_to(OrganizationGroup.synchronize_mds))
@@ -65,6 +66,7 @@ class OrganizationMDSLinkSynchronizeResource(object):
                     OrganizationMDSLinkProtocol.mds_link_id==mds_link_id).\
                 all()
 
+        successfully_synced = []
         for synced_protocol in synced_protocols:
             updated_protocol = session.query(SharedProtocol).\
                     filter(
@@ -73,7 +75,12 @@ class OrganizationMDSLinkSynchronizeResource(object):
                     order_by(desc(SharedProtocol.protocol_version)).\
                     first()
             if updated_protocol.protocol_version > synced_protocol.synchronized_version:
-                self.upload_protocol_to_mds(
+                success = self.upload_protocol_to_mds(
                     user, session, mds_link, updated_protocol, synced_protocol)
+                if success:
+                    successfully_synced.append(updated_protocol.protocol_id)
 
-        resp.context['result'] = {}
+
+        resp.context['result'] = {
+            'synced_protocols': successfully_synced,
+        }
