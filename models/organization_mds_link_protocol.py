@@ -1,4 +1,5 @@
 import sqlalchemy as db
+from sqlalchemy.orm import relationship
 from models.base import Base, PHMixin
 
 
@@ -19,3 +20,5 @@ class OrganizationMDSLinkProtocol(PHMixin, Base):
             [protocol_id, synchronized_version],
             ["ph_protocols.id", "ph_protocols.version"],
             ondelete="CASCADE")
+
+    protocol = relationship("Protocol")
