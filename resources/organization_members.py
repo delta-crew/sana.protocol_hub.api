@@ -13,7 +13,7 @@ class OrganizationMembersResource(object):
     @falcon.before(user_belongs_to_organization)
     def on_get(self, req, resp, organization_id):
         organization_member_schema = OrganizationMemberSchema(
-                only=('id', 'user.first_name', 'user.last_name', 'user.username'),
+                only=('id', 'user.id', 'user.first_name', 'user.last_name', 'user.username'),
                 many=True)
         session = req.context['session']
 

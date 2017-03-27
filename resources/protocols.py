@@ -14,6 +14,7 @@ class ProtocolsResource(object):
         session = req.context['session']
 
         protocols = session.query(Protocol).\
+                options(joinedload(Protocol.user)).\
                 filter(Protocol.user_id==req.context['user'].id).\
                 all()
 
