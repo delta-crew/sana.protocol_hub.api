@@ -41,9 +41,11 @@ class SharedProtocolsResource(object):
 
         protocol = session.query(Protocol).\
             filter_by(
-                id=shared_protocol.protocol.id,
-                version=shared_protocol.protocol.version).\
+                id=req.context['body']['protocol_id'],
+                version=req.context['body']['version']).\
             first()
+
+        shared_protocol.protocol = protocol
 
         if protocol == None:
             resp.status = falcon.HTTP_BAD_REQUEST
