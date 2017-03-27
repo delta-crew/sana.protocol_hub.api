@@ -147,5 +147,6 @@ app.add_route(
 # Unmatched routes
 app.add_sink(route_not_found, '')
 
-# Generic unhandled errors
-# app.add_error_handler(Exception, generic_error)
+# Ignore expected errors (ie. 401, 404), catch all others)
+app.add_error_handler(Exception, generic_error)
+app.add_error_handler(falcon.HTTPError, lambda *args: None)
