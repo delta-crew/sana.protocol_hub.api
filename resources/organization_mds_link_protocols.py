@@ -52,7 +52,7 @@ class OrganizationMDSLinkProtocolsResource(object):
         mds_link_protocol.mds_link_id = mds_link_id
 
         protocol = session.query(SharedProtocol).\
-                filter(SharedProtocol.protocol_id==mds_link_protocol.protocol.id).\
+                filter(SharedProtocol.protocol_id==req.context['body']['protocol_id']).\
                 order_by(desc(SharedProtocol.protocol_version)).\
                 first()
 

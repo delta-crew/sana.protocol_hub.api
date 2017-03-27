@@ -6,3 +6,4 @@ from marshmallow_sqlalchemy import ModelSchema
 class OrganizationSchema(ModelSchema):
     class Meta:
         model = Organization
+        exclude = ['members']

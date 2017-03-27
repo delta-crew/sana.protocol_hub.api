@@ -5,4 +5,5 @@ from marshmallow_sqlalchemy import ModelSchema
 
 class OrganizationMDSLinkSchema(ModelSchema):
     class Meta:
+        exclude = ['protocols']
         model = OrganizationMDSLink

@@ -10,7 +10,7 @@ from schemas import OrganizationSchema
 class OrganizationsResource(object):
     @falcon.before(login_required)
     def on_get(self, req, resp):
-        organization_schema = OrganizationSchema(many=True, exclude=('members'))
+        organization_schema = OrganizationSchema(many=True)
         session = req.context['session']
         user = req.context['user']
 
