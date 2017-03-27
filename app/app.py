@@ -36,9 +36,9 @@ cors = CORS(
 app = falcon.API(
     middleware=[
         cors.middleware,
-        SessionWrapper(),
         BodyParser(),
         JSendTranslator(),
+        SessionWrapper(),
     ]
 )
 
