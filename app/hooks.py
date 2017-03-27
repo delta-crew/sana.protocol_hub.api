@@ -37,6 +37,7 @@ def authorize_organization_user_to(permission):
             if has_permissions == None:
                 resp.context['type'] = FAIL_RESPONSE
                 resp.context['result'] = {'unauthorized': 'no permission to perform'}
+                resp.status = falcon.HTTP_UNAUTHORIZED
                 raise falcon.HTTPUnauthorized()
 
     return helper
@@ -54,6 +55,7 @@ def user_belongs_to_organization(req, resp, resource, params):
     if has_permissions == None:
         resp.context['type'] = FAIL_RESPONSE
         resp.context['result'] = {'unauthorized': 'no permission to perform'}
+        resp.status = falcon.HTTP_UNAUTHORIZED
         raise falcon.HTTPUnauthorized()
 
 
@@ -61,6 +63,7 @@ def login_required(req, resp, resource, params):
     if req.auth == None:
         resp.context['type'] = FAIL_RESPONSE
         resp.context['result'] = {'unauthorized': 'no auth token provided'}
+        resp.status = falcon.HTTP_UNAUTHORIZED
         raise falcon.HTTPUnauthorized()
 
     session = req.context['session']
@@ -69,12 +72,14 @@ def login_required(req, resp, resource, params):
     if token == None:
         resp.context['type'] = FAIL_RESPONSE
         resp.context['result'] = {'unauthorized': 'invalid token'}
+        resp.status = falcon.HTTP_UNAUTHORIZED
         raise falcon.HTTPUnauthorized()
 
     user = session.query(User).get(token.user_id)
     if user == None:
         resp.context['type'] = FAIL_RESPONSE
         resp.context['result'] = {'unauthorized': 'invalid user'}
+        resp.status = falcon.HTTP_UNAUTHORIZED
         raise falcon.HTTPUnauthorized()
 
     req.context['user'] = user
