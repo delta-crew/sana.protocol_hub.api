@@ -42,7 +42,7 @@ class ProtocolsResource(object):
 
         protocol, errors = schema.load(req.context['body'], session=session)
         if errors:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = errors
             return

@@ -43,7 +43,7 @@ class OrganizationResource(object):
         new_organization, errors = organization_schema.load(
             req.context['body'], instance=organization, session=session)
         if errors:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = errors
             return

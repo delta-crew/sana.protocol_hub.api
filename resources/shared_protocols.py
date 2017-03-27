@@ -32,7 +32,7 @@ class SharedProtocolsResource(object):
 
         shared_protocol, errors = schema.load(req.context['body'], session=session)
         if errors:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = errors
             return
@@ -46,7 +46,7 @@ class SharedProtocolsResource(object):
             first()
 
         if protocol == None:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = {'protocol_id': 'no protocol with id {}'.format(shared_protocol.protocol.id)}
             return

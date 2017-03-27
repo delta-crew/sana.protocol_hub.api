@@ -35,7 +35,7 @@ class OrganizationGroupMembersResource(object):
         group_member, errors = organization_group_member_schema.load(
             req.context['body'], session=session)
         if errors:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = errors
             return
@@ -50,7 +50,7 @@ class OrganizationGroupMembersResource(object):
                 one_or_none()
 
         if member == None:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = {'member_id': 'member not found'}
             return
@@ -58,7 +58,7 @@ class OrganizationGroupMembersResource(object):
         group = session.query(OrganizationGroup).get(group_id)
 
         if group == None:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = {'group_id': 'group not found'}
             return

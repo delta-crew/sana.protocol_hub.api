@@ -34,7 +34,7 @@ class OrganizationMDSLinkProtocolsResource(object):
 
         mds_link_protocol, errors = schema.load(req.context['body'], session=session)
         if errors:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = errors
             return
@@ -44,7 +44,7 @@ class OrganizationMDSLinkProtocolsResource(object):
                 filter(OrganizationMDSLink.id==mds_link_id)
 
         if mds_link == None:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = { 'mds_link': 'not found' }
             return
@@ -57,7 +57,7 @@ class OrganizationMDSLinkProtocolsResource(object):
                 first()
 
         if protocol == None:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = { 'protocol': 'not found' }
             return

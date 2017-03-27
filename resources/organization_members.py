@@ -34,7 +34,7 @@ class OrganizationMembersResource(object):
 
         member, errors = organization_member_schema.load(req.context['body'], session=session)
         if errors:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = errors
             return
@@ -46,7 +46,7 @@ class OrganizationMembersResource(object):
                 one_or_none()
 
         if user == None:
-            resp.stats = falcon.HTTP_BAD_REQUEST
+            resp.status = falcon.HTTP_BAD_REQUEST
             resp.context['type'] = FAIL_RESPONSE
             resp.context['result'] = {'user_id': 'user not found'}
             return
