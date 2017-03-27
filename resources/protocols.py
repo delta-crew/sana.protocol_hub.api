@@ -3,6 +3,7 @@ import falcon
 
 from app import db
 from app.constants import SUCCESS_RESPONSE, FAIL_RESPONSE
+from sqlalchemy.sql import func, label
 from sqlalchemy.orm import joinedload
 from models import Protocol, SharedProtocol, OrganizationMember
 from schemas import ProtocolSchema
@@ -13,13 +14,24 @@ class ProtocolsResource(object):
     def on_get(self, req, resp):
         session = req.context['session']
 
+
+        latest_version = session.\
+            query(
+                label('id', Protocol.id),
+                label('max_version', func.max(Protocol.version))).\
+            group_by(Protocol.id).\
+            subquery()
         protocols = session.query(Protocol).\
-                options(joinedload(Protocol.user)).\
-                filter(Protocol.user_id==req.context['user'].id).\
-                all()
+            options(joinedload(Protocol.user)).\
+            filter(
+                Protocol.user_id==req.context['user'].id)
+        most_recent_protocols = protocols.\
+            join(latest_version, Protocol.id==latest_version.c.id).\
+            filter(Protocol.version==latest_version.c.max_version).\
+            all()
 
         protocol_schema = ProtocolSchema(many=True)
-        result = protocol_schema.dump(protocols)
+        result = protocol_schema.dump(most_recent_protocols)
         resp.context['result'] = result.data
 
     @falcon.before(login_required)
