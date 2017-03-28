@@ -25,7 +25,8 @@ class SharedProtocolsResource(object):
         resp.context['result'] = result.data
 
     @falcon.before(login_required)
-    @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_protocols))
+    @falcon.before(user_belongs_to_organization)
+    # @falcon.before(authorize_organization_user_to(OrganizationGroup.manage_protocols))
     def on_post(self, req, resp, organization_id):
         session = req.context['session']
         schema = SharedProtocolSchema()
