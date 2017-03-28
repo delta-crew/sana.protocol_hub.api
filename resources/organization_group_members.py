@@ -41,6 +41,7 @@ class OrganizationGroupMembersResource(object):
             return
 
         group_member.organization_group_id = group_id
+        group_member.manage_protocols = True
 
         member = session.query(OrganizationMember).\
                 filter_by(

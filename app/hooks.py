@@ -29,8 +29,9 @@ def authorize_organization_user_to(permission):
         if user != organization.owner:
             has_permissions = session.query(OrganizationGroup).\
                     join(OrganizationGroupMember).\
+                    join(OrganizationMember).\
                     filter(OrganizationGroup.organization_id==organization_id).\
-                    filter(OrganizationGroupMember.user_id==user.id).\
+                    filter(OrganizationMember.user_id==user.id).\
                     filter(permission==True).\
                     one_or_none()
 
